@@ -69,11 +69,7 @@ export default function Home() {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-6">Higher Education ROI Calculator</h1>
           <p className="text-lg text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            Higher education institutions face mounting financial pressure from declining enrollment,
-            rising operational costs, and increased competition. Universities that fail to modernize
-            administrative operations risk budget shortfalls that threaten program quality and institutional
-            viability. Universities who adapt, however, will secure their financial futures and lead the charge
-            for decades to come.
+            Universities face financial pressure from declining enrollment and rising costs. Those who modernize will secure their futures.
           </p>
           <p className="text-lg text-gray-300 max-w-4xl mx-auto leading-relaxed mt-4">
             See how much your university can save by installing simple AI solutions.
