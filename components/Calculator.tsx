@@ -1,37 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { Department, CalculatorInputs, ROIResults } from '@/lib/types';
 import { calculateStudentServices, calculateFinancialAid, calculateHumanResources } from '@/lib/calculations';
 import { Results } from './Results';
 
 interface CalculatorProps {
   department: Department;
+  savedResults: ROIResults | null;
+  savedInputs: CalculatorInputs;
+  onResultsUpdate: (department: Department, results: ROIResults | null) => void;
+  onInputsUpdate: (department: Department, inputs: CalculatorInputs) => void;
 }
 
-export function Calculator({ department }: CalculatorProps) {
-  const [inputs, setInputs] = useState<CalculatorInputs>({
-    totalEnrollment: 30000,
-    aidApplicationRate: 70,
-    totalEmployees: 3500,
-    currentFTE: 15,
-    averageSalary: 60000
-  });
-  const [results, setResults] = useState<ROIResults | null>(null);
-
-  const handleCalculate = () => {
+export function Calculator({
+  department,
+  savedResults,
+  savedInputs,
+  onResultsUpdate,
+  onInputsUpdate
+}: CalculatorProps) {
+  const handleCalculate = useCallback(() => {
     let result: ROIResults;
 
     if (department === 'student-services') {
-      result = calculateStudentServices(inputs);
+      result = calculateStudentServices(savedInputs);
     } else if (department === 'financial-aid') {
-      result = calculateFinancialAid(inputs);
+      result = calculateFinancialAid(savedInputs);
+    } else if (department === 'human-resources') {
+      result = calculateHumanResources(savedInputs);
     } else {
-      result = calculateHumanResources(inputs);
+      return; // Skip for full-roi tab
     }
 
-    setResults(result);
-  };
+    onResultsUpdate(department, result);
+  }, [department, savedInputs, onResultsUpdate]);
+
+  const handleInputChange = useCallback((newInputs: CalculatorInputs) => {
+    onInputsUpdate(department, newInputs);
+  }, [department, onInputsUpdate]);
 
   // Get department-specific label for salary field
   const getDepartmentLabel = () => {
@@ -53,8 +60,8 @@ export function Calculator({ department }: CalculatorProps) {
             </label>
             <input
               type="number"
-              value={inputs.totalEnrollment}
-              onChange={e => setInputs({...inputs, totalEnrollment: Number(e.target.value)})}
+              value={savedInputs.totalEnrollment}
+              onChange={e => handleInputChange({...savedInputs, totalEnrollment: Number(e.target.value)})}
               className="w-full px-4 py-2 bg-gray-700 rounded text-white"
             />
           </div>
@@ -67,8 +74,8 @@ export function Calculator({ department }: CalculatorProps) {
             </label>
             <input
               type="number"
-              value={inputs.aidApplicationRate}
-              onChange={e => setInputs({...inputs, aidApplicationRate: Number(e.target.value)})}
+              value={savedInputs.aidApplicationRate}
+              onChange={e => handleInputChange({...savedInputs, aidApplicationRate: Number(e.target.value)})}
               className="w-full px-4 py-2 bg-gray-700 rounded text-white"
             />
           </div>
@@ -81,8 +88,8 @@ export function Calculator({ department }: CalculatorProps) {
             </label>
             <input
               type="number"
-              value={inputs.totalEmployees}
-              onChange={e => setInputs({...inputs, totalEmployees: Number(e.target.value)})}
+              value={savedInputs.totalEmployees}
+              onChange={e => handleInputChange({...savedInputs, totalEmployees: Number(e.target.value)})}
               className="w-full px-4 py-2 bg-gray-700 rounded text-white"
             />
           </div>
@@ -94,8 +101,8 @@ export function Calculator({ department }: CalculatorProps) {
           </label>
           <input
             type="number"
-            value={inputs.currentFTE}
-            onChange={e => setInputs({...inputs, currentFTE: Number(e.target.value)})}
+            value={savedInputs.currentFTE}
+            onChange={e => handleInputChange({...savedInputs, currentFTE: Number(e.target.value)})}
             className="w-full px-4 py-2 bg-gray-700 rounded text-white"
           />
         </div>
@@ -106,8 +113,8 @@ export function Calculator({ department }: CalculatorProps) {
           </label>
           <input
             type="number"
-            value={inputs.averageSalary}
-            onChange={e => setInputs({...inputs, averageSalary: Number(e.target.value)})}
+            value={savedInputs.averageSalary}
+            onChange={e => handleInputChange({...savedInputs, averageSalary: Number(e.target.value)})}
             className="w-full px-4 py-2 bg-gray-700 rounded text-white"
           />
         </div>
@@ -121,7 +128,7 @@ export function Calculator({ department }: CalculatorProps) {
       </div>
 
       {/* Results */}
-      {results && <Results results={results} />}
+      {savedResults && <Results results={savedResults} />}
     </div>
   );
 }

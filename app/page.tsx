@@ -1,12 +1,66 @@
 'use client';
 
-import { useState } from 'react';
-import { Department } from '@/lib/types';
+import { useState, useCallback } from 'react';
+import { Department, ROIResults, CalculatorInputs } from '@/lib/types';
 import { Tabs } from '@/components/Tabs';
 import { Calculator } from '@/components/Calculator';
+import { FullROI } from '@/components/FullROI';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Department>('student-services');
+
+  // Store results and inputs for each department separately
+  const [departmentResults, setDepartmentResults] = useState<Record<Department, ROIResults | null>>({
+    'student-services': null,
+    'financial-aid': null,
+    'human-resources': null,
+    'full-roi': null
+  });
+
+  const [departmentInputs, setDepartmentInputs] = useState<Record<Department, CalculatorInputs>>({
+    'student-services': {
+      totalEnrollment: 30000,
+      aidApplicationRate: 70,
+      totalEmployees: 3500,
+      currentFTE: 15,
+      averageSalary: 60000
+    },
+    'financial-aid': {
+      totalEnrollment: 30000,
+      aidApplicationRate: 70,
+      totalEmployees: 3500,
+      currentFTE: 15,
+      averageSalary: 60000
+    },
+    'human-resources': {
+      totalEnrollment: 30000,
+      aidApplicationRate: 70,
+      totalEmployees: 3500,
+      currentFTE: 15,
+      averageSalary: 60000
+    },
+    'full-roi': {
+      totalEnrollment: 30000,
+      aidApplicationRate: 70,
+      totalEmployees: 3500,
+      currentFTE: 15,
+      averageSalary: 60000
+    }
+  });
+
+  const handleResultsUpdate = useCallback((department: Department, results: ROIResults | null) => {
+    setDepartmentResults(prev => ({
+      ...prev,
+      [department]: results
+    }));
+  }, []);
+
+  const handleInputsUpdate = useCallback((department: Department, inputs: CalculatorInputs) => {
+    setDepartmentInputs(prev => ({
+      ...prev,
+      [department]: inputs
+    }));
+  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8">
@@ -36,8 +90,23 @@ export default function Home() {
         {/* Tabs */}
         <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Calculator */}
-        <Calculator department={activeTab} />
+        {/* Calculator or Full ROI */}
+        {activeTab === 'full-roi' ? (
+          <FullROI
+            studentServicesResults={departmentResults['student-services']}
+            financialAidResults={departmentResults['financial-aid']}
+            humanResourcesResults={departmentResults['human-resources']}
+          />
+        ) : (
+          <Calculator
+            key={activeTab}
+            department={activeTab}
+            savedResults={departmentResults[activeTab]}
+            savedInputs={departmentInputs[activeTab]}
+            onResultsUpdate={handleResultsUpdate}
+            onInputsUpdate={handleInputsUpdate}
+          />
+        )}
       </div>
     </main>
   );

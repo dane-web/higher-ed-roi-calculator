@@ -1,4 +1,4 @@
-export type Department = 'student-services' | 'financial-aid' | 'human-resources';
+export type Department = 'student-services' | 'financial-aid' | 'human-resources' | 'full-roi';
 
 export interface CalculatorInputs {
   // Student Services & Financial Aid

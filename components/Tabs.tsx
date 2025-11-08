@@ -9,7 +9,8 @@ export function Tabs({ activeTab, onTabChange }: TabsProps) {
   const tabs = [
     { id: 'student-services' as Department, label: 'Student Services' },
     { id: 'financial-aid' as Department, label: 'Financial Aid' },
-    { id: 'human-resources' as Department, label: 'Human Resources' }
+    { id: 'human-resources' as Department, label: 'Human Resources' },
+    { id: 'full-roi' as Department, label: 'Full ROI' }
   ];
 
   return (
